@@ -1,0 +1,63 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Created by Dvir Blumshtain
+
+# Server Configuration
+
+hostname        = "centos7.dev"
+
+# Set a network IP address.
+server_ip             = "10.77.77.220"
+server_cpus           = "1"   # Cores
+server_memory         = "1024" # MB
+server_swap           = "1024" # Options: false | int (MB) - Guideline: Between one or two times the server_memory
+
+# UTC        for Universal Coordinated Time
+# US/Central for American Central
+# US/Eastern for American Eastern
+# IST        for Israel Standard Time (UTC +2)
+server_timezone  = "IST"
+
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "centos/7"
+
+  ### System Setup:
+  config.vm.provider "virtualbox" do |vb|
+   ## Display the Boot GUI in booting the Machine:
+   #   vb.gui = true
+   ## Customize the amount of memory on the VM:
+   vb.name = hostname
+   vb.memory = server_memory
+   vb.cpus = server_cpus
+  end 
+    
+  ### Network Setup:
+  ## Create a public network, bridged, using a specific IP.
+  config.vm.network "public_network", ip: server_ip
+    
+  ###Forwarded Port Mapping:
+  ## Create a forwarded port mapping which enable public access:
+  #config.vm.network "forwarded_port", guest: 80, host: 8080
+  ## Create a forwarded port mapping which allows access via 127.0.0.1 Only:
+  #config.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
+  
+  # Only run the provisioning on the first 'vagrant up'
+  #if Dir.glob("#{File.dirname(__FILE__)}/.vagrant/machines/default/*/id").empty?
+
+    ## Disable automatic box update:
+    # config.vm.box_check_update = false
+  
+    ### Docker Install:
+    config.vm.provision "shell" , path: "Docker.sh"
+    #config.vm.provision "shell" , path: "Install_Docker.sh"
+
+
+  #end
+  
+  
+
+
+
+end
